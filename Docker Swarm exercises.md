@@ -1,18 +1,21 @@
 # Docker Swarm exercises
 
+## About this exercise set
+
+> To help the users of this exercise to learn how to use docker and where to get help when they are stuck in the real world, I have tried to create exercieses that forces the user to look in documentation and experiment.
+
 ## Setup a Docker Swarm Cluster
 
 In this part we use Play With Docker as a free provider of Alpine Linux Virtual Machine in the cloud. These can be used to build and run Docker containers and to play around with clusters in Swarm Mode.
 
 This can be found at: [http://play-with-docker.com/](http://play-with-docker.com/)
 
-If you are not at at all able to use vim which is the only editor avaible on play with docker you can install another.
+If you are not at at all able to use vim, which is the only editor avaible on play with docker, you can install another.
 
     $ apk update
     $ apk add nano
 
 Or install the [docker-machine driver for Play With Docker](https://github.com/play-with-docker/docker-machine-driver-pwd), to be able to edit files locally on your own machine.
-
 
 ### Create machine instances
 
@@ -24,7 +27,7 @@ Chose a machine to be the manager and initiate the Docker Swarm cluster on this 
 
     $ docker swarm init --advertise-addr eth0
 
-On the output of this command we get the command that can be used to join workers to the cluster
+In the output of this command, we get the command that can be used to join workers to the cluster
 
     $ docker swarm join --token SWMTKN-1-2ypam... {ip}:2377
 
@@ -55,7 +58,7 @@ Check the new endpoint on the manager node (port 8081) to see our cluster and th
 
 #### Exercise
 
-Delete the service we created above:
+Delete the service we created above.
 
     $ docker service ls
     ID                  NAME                MODE                REPLICAS            IMAGE                             PORTS
@@ -83,7 +86,6 @@ Change the command we just ran to a docker-compose.yml file. Looking something l
 Redeploy the visualizer with the yaml file, and validate that it works!
 
     $ docker stack deploy --compose-file docker-compose.yml viz
-
 
 ## Create a complete Docker Swarm stack
 
@@ -132,17 +134,27 @@ We can deploy the stack with this description.
     volumes:
       db-data:
 
-First create a yml file with the data above and deploy it to our cluster as in the last exercise. Check that you can see all five containers in the visualizer. Also check that you can see the two frontends at port 5000 and 5001. Try voting.
+Start by creating a yml file with the data above and deploy it to our cluster as in the last exercise.
+Check that you can see all five containers in the visualizer. You should also check that you can see the two frontends at port 5000 and 5001.
+Try voting.
 
-### Scaling
+### Scaling the frontend service
 
-News has spread like wildfire about our new awesome voting app and we need to have more servers avaible for voting.
+News has spread like wildfire about our new awesome voting app and we need to have more services available for voting.
 
-Call the _docker service_ comandline with a _--help_ param to figure out how to scale the _vote_ service to 5 instances.
+#### Exercise
+
+Call the _docker service_ commandline with a _--help_ param to figure out how to scale the _vote_ service to 5 instances.
 
     $ docker service --help
 
-Once you have scaled the service, check that you can see all five containers in the visualizer. Also chech that the vote page is now handled by different containers. The container handling a request is shown on the vote page.
+Once you have scaled the service:
+
+ - Check that you can see all five containers in the visualizer.
+ - Check that the vote page is now handled by different containers.
+     * The container handling a request is shown on the vote page.
+
+#### Exercise
 
 Update the yml file with the new deployment info, stating that we want to have 5 replicas of the vote service.
 [Docker Compose deploy documentation](https://docs.docker.com/compose/compose-file/#deploy)
@@ -151,26 +163,29 @@ Update the yml file with the new deployment info, stating that we want to have 5
 
 The next step in making our voting application more production ready is to make sure that the services only has access to what they need.
 
-More specifically we want the services in the voting application to be on different networks. So that the frontend application vote only has access to the reddis cache and not to the postgress database or the result application.
+More specifically, we want the services in the voting application to be on different networks. So that the frontend application _vote_ only has access to the redis cache and not to the postgres database or the result application.
 
-_Frontend_
- - vote
- - redis
- - worker
+We also need the _worker_ service to have access to both networks, because it is the one responsible for moving votes from the redis cache to the postgres database.
 
-_Backend_
- - worker
- - db
- - result
+| _Frontend_    | _Backend_     |
+| ------------- |---------------|
+| vote          | worker        |
+| redis         | db            |
+| worker        | result        |
+
+#### Exercise
 
 Create the two networks in the yml file and specify the networks on the services.
 
 ### Specify placement for the services
 
-Next task on the production list is to make sure that many people voting doesn't kill our result database.
-We want to make sure that this does not happen by putting the postgress database and the result application on the manager node and all the other on the worker nodes.
+Next task on the production list is to make sure that many people voting does not kill our result database.
+We want to make sure that this does not happen by putting the postgres database and the result application on the manager node and all the other on the worker nodes.
 
-Update the yml file with conditions on all the services that specify where they are allowed to live. Validate by looking in the visualizer. Check that only the postgress and the result application is on the master.
+#### Exercise
+
+Update the yml file with conditions on all the services that specify where they are allowed to live. Validate by looking in the visualizer.
+Check that only the postgres and the result application is on the master.
 
 ### References
 1. [Play With Docker on github](https://github.com/play-with-docker/play-with-docker)
