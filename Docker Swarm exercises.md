@@ -63,7 +63,7 @@ Delete the service we created above.
     $ docker service ls
     ID                  NAME                MODE                REPLICAS            IMAGE                             PORTS
     rjvz7l1tzoal        viz                 replicated          1/1                 dockersamples/visualizer:stable   *:8081->8080/tcp
-    [node2] (local) root@10.0.26.4 ~
+    
     $ docker service rm viz
 
 Change the command we just ran to a docker-compose.yml file. Looking something like this:
