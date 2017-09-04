@@ -3,10 +3,11 @@
 ## About this exercise set
 
 > To help the users of this exercise to learn how to use docker and where to get help when they are stuck in the real world, I have tried to create exercieses that forces the user to look in documentation and experiment.
+> **This means, that the excercise set is not a simple copy & paste exercise**
 
 ## Setup a Docker Swarm Cluster
 
-In this part we use Play With Docker as a free provider of Alpine Linux Virtual Machine in the cloud. These can be used to build and run Docker containers and to play around with clusters in Swarm Mode.
+In this part we use Play With Docker as a free provider of Alpine Linux Virtual MachineS in the cloud. These can be used to build and run Docker containers and to play around with clusters in Swarm Mode.
 
 This can be found at: [http://play-with-docker.com/](http://play-with-docker.com/)
 
@@ -86,10 +87,12 @@ Change the command we just ran to a docker-compose.yml file. Looking something l
 Redeploy the visualizer with the yaml file, and validate that it works!
 
     $ docker stack deploy --compose-file docker-compose.yml viz
+    
+**[Note]** This command is used BOTH for deploying a stack first time and for updating the desired state of the stack. 
 
 ## Create a complete Docker Swarm stack
 
-We will now look at an example application called VoteingApp from one the Docker Labs.
+We will now look at an example application called VotingApp from one the Docker Labs.
 
 ![Architecture diagram](https://raw.githubusercontent.com/dockersamples/example-voting-app/master/architecture.png)
 
@@ -130,6 +133,9 @@ We can deploy the stack with this description.
     
       worker:
         image: dockersamples/examplevotingapp_worker
+        depends_on:
+          - db
+          - redis
     
     volumes:
       db-data:
@@ -176,16 +182,30 @@ We also need the _worker_ service to have access to both networks, because it is
 #### Exercise
 
 Create the two networks in the yml file and specify the networks on the services.
+Note that this is something that docker has changed a lot over time.
+Newest documentation is here: [Docker compose endpoint mode](https://docs.docker.com/compose/compose-file/#endpoint_mode)
+
+## Playing with node failure
+
+To simulate a failing node (bloody hardware failing all the time) try deleting one of the worker nodes in the Play With Docker interface.
+When doing this keep an eye on the visualizer and see how all the containers are redeployed on the remining node.
+
+Try creating two new nodes and joining them to the cluster. By default docker swarm will not move running containers to the new nodes.
+Try scaling up the _vote_ or _worker_ services and see how the containers are placed.
 
 ## Specify placement for the services
 
-Next task on the production list is to make sure that many people voting does not kill our result database.
-We want to make sure that this does not happen by putting the postgres database and the result application on the manager node and all the other on the worker nodes.
+Next task on the production list is to make sure that our result database are only running on machines that have ssd.
+Add a label called _disk_ to all our worker nodes, with _disk=hdd_ for two of them and _disk=ssd_ on the last worker
+See [documentation](https://docs.docker.com/engine/swarm/manage-nodes/#add-or-remove-label-metadata) for adding lables.
 
 #### Exercise
 
-Update the yml file with conditions on all the services that specify where they are allowed to live. Validate by looking in the visualizer.
-Check that only the postgres and the result application is on the master.
+Update the yml file with conditions on the _db_ service that specify that it can only be deployed on _disk=ssd_. Validate by looking in the visualizer.
+
+You can also change the other services to make sure that only the database runs on machines with ssd.
+
+Try setting the manager as _drained_ so no containers are scheduled on the manager.
 
 ### References
 1. [Play With Docker on github](https://github.com/play-with-docker/play-with-docker)
