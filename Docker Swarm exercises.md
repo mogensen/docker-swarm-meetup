@@ -138,7 +138,7 @@ Start by creating a yml file with the data above and deploy it to our cluster as
 Check that you can see all five containers in the visualizer. You should also check that you can see the two frontends at port 5000 and 5001.
 Try voting.
 
-### Scaling the frontend service
+## Scaling the frontend service
 
 News has spread like wildfire about our new awesome voting app and we need to have more services available for voting.
 
@@ -159,7 +159,7 @@ Once you have scaled the service:
 Update the yml file with the new deployment info, stating that we want to have 5 replicas of the vote service.
 [Docker Compose deploy documentation](https://docs.docker.com/compose/compose-file/#deploy)
 
-### Network security
+## Network security
 
 The next step in making our voting application more production ready is to make sure that the services only has access to what they need.
 
@@ -177,7 +177,7 @@ We also need the _worker_ service to have access to both networks, because it is
 
 Create the two networks in the yml file and specify the networks on the services.
 
-### Specify placement for the services
+## Specify placement for the services
 
 Next task on the production list is to make sure that many people voting does not kill our result database.
 We want to make sure that this does not happen by putting the postgres database and the result application on the manager node and all the other on the worker nodes.
