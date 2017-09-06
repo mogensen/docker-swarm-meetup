@@ -52,7 +52,7 @@ Create a service stack with the visualizer container.
     docker service create --name=viz \
         -p=8081:8080 \
         --constraint=node.role==manager \
-        --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
+        --mount=/var/run/docker.sock:/var/run/docker.sock \
         dockersamples/visualizer:stable
 
 Check the new endpoint on the manager node (port 8081) to see our cluster and the visualizer container.
@@ -68,6 +68,7 @@ Delete the service we created above.
     $ docker service rm viz
 
 Change the command we just ran to a docker-compose.yml file. Looking something like this:
+(Note that the volume mapping does not have quite the same format in the commandline as it does in the docker-compose file)
 
     version: "3"
     services:
