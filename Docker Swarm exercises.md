@@ -52,7 +52,7 @@ Create a service stack with the visualizer container.
     docker service create --name=viz \
         -p=8081:8080 \
         --constraint=node.role==manager \
-        --mount=/var/run/docker.sock:/var/run/docker.sock \
+        --mount=type=bind,src=/var/run/docker.sock,dst=/var/run/docker.sock \
         dockersamples/visualizer:stable
 
 Check the new endpoint on the manager node (port 8081) to see our cluster and the visualizer container.
