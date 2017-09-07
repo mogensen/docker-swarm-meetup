@@ -5,7 +5,7 @@
 > To help the users of this exercise to learn how to use docker and where to get help when they are stuck in the real world, I have tried to create exercieses that forces the user to look in documentation and experiment.
 > **This means, that the excercise set is not a simple copy & paste exercise**
 
-Start with the [Docker Swarm Exercises](other_file.md)
+Start with the [Docker Swarm Exercises](Docker Swarm exercises.md)
 
 ## I need more help - please
 
