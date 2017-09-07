@@ -67,7 +67,7 @@ Delete the service we created above.
     
     $ docker service rm viz
 
-Change the command we just ran to a docker-compose.yml file. Looking something like this:
+Change the command we just ran to a docker-compose file with the name _docker-visualize.yml_. Looking something like this:
 (Note that the volume mapping does not have quite the same format in the commandline as it does in the docker-compose file)
 
     version: "3"
@@ -87,8 +87,8 @@ Change the command we just ran to a docker-compose.yml file. Looking something l
 
 Redeploy the visualizer with the yaml file, and validate that it works!
 
-    $ docker stack deploy --compose-file docker-compose.yml viz
-    
+    $ docker stack deploy --compose-file docker-visualize.yml viz
+
 **[Note]** This command is used BOTH for deploying a stack first time and for updating the desired state of the stack. 
 
 ## Create a complete Docker Swarm stack
@@ -99,7 +99,7 @@ We will now look at an example application called VotingApp from one the Docker 
 
 * A Python webapp which lets you vote between two options
 * A Redis queue which collects new votes
-* A .NET worker which consumes votes and stores them in…
+* A .NET worker which consumes votes and stores them in...
 * A Postgres database backed by a Docker volume
 * A Node.js webapp which shows the results of the voting in real time
 
