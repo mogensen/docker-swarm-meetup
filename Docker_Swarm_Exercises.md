@@ -2,8 +2,34 @@
 
 ## About this exercise set
 
-> To help the users of this exercise to learn how to use docker and where to get help when they are stuck in the real world, I have tried to create exercieses that forces the user to look in documentation and experiment.
-> **This means, that the excercise set is not a simple copy & paste exercise**
+> To help the users of this exercise to learn how to use docker and where to get help when they are stuck in the real world, I have tried to create exercises that forces the user to look in documentation and experiment.
+>
+> **This means, that the exercise set is not a simple copy & paste exercise**
+
+## Table of content
+
+* [About this exercise set](#about-this-exercise-set)
+* [Table of content](#table-of-content)
+* [Setup a Docker Swarm Cluster](#setup-a-docker-swarm-cluster)
+  + [Create machine instances](#create-machine-instances)
+  + [Create cluster](#create-cluster)
+* [Deploy your first service](#deploy-your-first-service)
+  + [Create a visualizer stack](#create-a-visualizer-stack)
+    - [Exercise - Creating a docker-compose file](#exercise---creating-a-docker-compose-file)
+* [Create a complete Docker Swarm stack](#create-a-complete-docker-swarm-stack)
+* [Scaling the frontend service](#scaling-the-frontend-service)
+    - [Exercise - Scaling with the Docker CLI](#exercise---scaling-with-the-docker-cli)
+    - [Exercise - Scaling in the docker-compose file](#exercise---scaling-in-the-docker-compose-file)
+* [Network security](#network-security)
+  + [Exercise - Setting up network separation](#exercise---setting-up-network-separation)
+* [Playing with node failure](#playing-with-node-failure)
+* [Specify placement for the services](#specify-placement-for-the-services)
+  + [Exercise - Placing services](#exercise---placing-services)
+* [Setting limits for the application containers](#setting-limits-for-the-application-containers)
+  + [Exercise - Limiting CPU and memory](#exercise---limiting-cpu-and-memory)
+* [Log aggregation](#log-aggregation)
+  + [Exercise - Sending logs to a central service](#exercise---sending-logs-to-a-central-service)
+* [References](#references)
 
 ## Setup a Docker Swarm Cluster
 
@@ -11,7 +37,7 @@ In this part we use Play With Docker as a free provider of Alpine Linux Virtual 
 
 This can be found at: [http://play-with-docker.com/](http://play-with-docker.com/)
 
-If you are not at at all able to use vim, which is the only editor avaible on play with docker, you can install another.
+If you are not at at all able to use vim, which is the only editor available on play with docker, you can install another.
 
     $ apk update
     $ apk add nano
@@ -20,7 +46,7 @@ Or install the [docker-machine driver for Play With Docker](https://github.com/p
 
 ### Create machine instances
 
-Start by creating three machines using the "+Add New Instance" botton.
+Start by creating three machines using the "+Add New Instance" button.
 
 ### Create cluster
 
@@ -45,7 +71,7 @@ Now we can validate that we have a cluster by going to the manager note and run 
 
 ### Create a visualizer stack
 
-To be able to see whats running on our cluster in a grahical interface we use the docker services called Visualizer.
+To be able to see whats running on our cluster in a graphical interface we use the docker services called Visualizer.
 
 Create a service stack with the visualizer container.
 
@@ -57,7 +83,7 @@ Create a service stack with the visualizer container.
 
 Check the new endpoint on the manager node (port 8081) to see our cluster and the visualizer container.
 
-#### Exercise
+#### Exercise - Creating a docker-compose file
 
 Delete the service we created above.
 
@@ -68,7 +94,7 @@ Delete the service we created above.
     $ docker service rm viz
 
 Change the command we just ran to a docker-compose file with the name _docker-visualize.yml_. Looking something like this:
-(Note that the volume mapping does not have quite the same format in the commandline as it does in the docker-compose file)
+(Note that the volume mapping does not have quite the same format in the command line as it does in the docker-compose file)
 
     version: "3"
     services:
@@ -89,7 +115,7 @@ Redeploy the visualizer with the yaml file, and validate that it works!
 
     $ docker stack deploy --compose-file docker-visualize.yml viz
 
-**[Note]** This command is used BOTH for deploying a stack first time and for updating the desired state of the stack. 
+**[Note]** This command is used BOTH for deploying a stack first time and for updating the desired state of the stack.
 
 ## Create a complete Docker Swarm stack
 
@@ -149,9 +175,9 @@ Try voting.
 
 News has spread like wildfire about our new awesome voting app and we need to have more services available for voting.
 
-#### Exercise
+#### Exercise - Scaling with the Docker CLI
 
-Call the _docker service_ commandline with a _--help_ param to figure out how to scale the _vote_ service to 5 instances.
+Call the _docker service_ command line with a _--help_ param to figure out how to scale the _vote_ service to 5 instances.
 
     $ docker service --help
 
@@ -161,7 +187,7 @@ Once you have scaled the service:
  - Check that the vote page is now handled by different containers.
      * The container handling a request is shown on the vote page.
 
-#### Exercise
+#### Exercise - Scaling in the docker-compose file
 
 Update the yml file with the new deployment info, stating that we want to have 5 replicas of the vote service.
 [Docker Compose deploy documentation](https://docs.docker.com/compose/compose-file/#deploy)
@@ -180,7 +206,7 @@ We also need the _worker_ service to have access to both networks, because it is
 | redis         | db            |
 | worker        | result        |
 
-#### Exercise
+### Exercise - Setting up network separation
 
 Create the two networks in the yml file and specify the networks on the services.
 Note that this is something that docker has changed a lot over time.
@@ -189,7 +215,7 @@ Newest documentation is here: [Docker compose endpoint mode](https://docs.docker
 ## Playing with node failure
 
 To simulate a failing node (bloody hardware failing all the time) try deleting one of the worker nodes in the Play With Docker interface.
-When doing this keep an eye on the visualizer and see how all the containers are redeployed on the remining node.
+When doing this keep an eye on the visualizer and see how all the containers are redeployed on the remaining node.
 
 Try creating two new nodes and joining them to the cluster. By default docker swarm will not move running containers to the new nodes.
 Try scaling up the _vote_ or _worker_ services and see how the containers are placed.
@@ -198,9 +224,9 @@ Try scaling up the _vote_ or _worker_ services and see how the containers are pl
 
 Next task on the production list is to make sure that our result database are only running on machines that have ssd.
 Add a label called _disk_ to all our worker nodes, with _disk=hdd_ for two of them and _disk=ssd_ on the last worker
-See [documentation](https://docs.docker.com/engine/swarm/manage-nodes/#add-or-remove-label-metadata) for adding lables.
+See [documentation](https://docs.docker.com/engine/swarm/manage-nodes/#add-or-remove-label-metadata) for adding labels.
 
-#### Exercise
+### Exercise - Placing services
 
 Update the yml file with conditions on the _db_ service that specify that it can only be deployed on _disk=ssd_. Validate by looking in the visualizer.
 
@@ -208,7 +234,54 @@ You can also change the other services to make sure that only the database runs 
 
 Try setting the manager as _drained_ so no containers are scheduled on the manager.
 
-### References
+## Setting limits for the application containers
+
+The next important thing to make our new awesome voting application more production ready is to limit the _cpu_ of all the services.
+This will help prevent a situation where on single service goes crazy and consumes all the resources on the host machine.
+An example of setting the limits from command line could look like this:
+
+    docker service deploy \
+      --limit-cpu 0.25 \
+      --reserve-cpu 0.1 \
+      webapp
+
+The _reserve-cpu_ parameter tells docker how much it can pack the container on a host, so that each container will always have at least the reserved cpu amount available.
+
+### Exercise - Limiting CPU and memory
+
+Update the yml file with conditions on all services that specify a cpu limit and a reserved cpu amount.
+
+You can also look at limiting the services on memory.
+
+## Log aggregation
+
+When we run many services on may machines, it becomes very important to have centralized logging.
+You should try to setup central logging of your Docker Swarm and send the logs from the different services to that service.
+
+There are plenty applications for central logging
+
+- Splunk
+- Humio
+- Logstash, ElasticSearch and Kibana
+- PaperTrail
+- Graylog2
+- ...
+
+For all containers that logs to standard out docker can collect the logs for us.
+
+### Exercise - Sending logs to a central service
+
+Create a free account at PaperTrails and setup a logsprout container on each Docker Swarm node to send the data to PaperTrails
+
+Remember that Docker Swarm has the notion of _mode_ for a service that can either be replicated or global.
+
+    https://help.papertrailapp.com/kb/configuration/configuring-centralized-logging-from-docker/
+
+Because the logsprout container gets all the logs from the Docker socket, and not by actually talking to any of the other containers, it does not need to know anything about them, or be able to send them requests.
+
+Create a new .yml stack file with the logsprout container in and deploy the stack to the cluster.
+
+## References
 1. [Play With Docker on github](https://github.com/play-with-docker/play-with-docker)
 2. [Deploy the Voting App on a Docker Swarm using Compose version 3](https://medium.com/lucjuggery/deploy-the-voting-apps-stack-on-a-docker-swarm-4390fd5eee4)
 3. [Example voting app](https://github.com/dockersamples/example-voting-app)
