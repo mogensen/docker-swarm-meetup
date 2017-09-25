@@ -187,28 +187,41 @@ Once you have scaled the service:
  - Check that the vote page is now handled by different containers.
      * The container handling a request is shown on the vote page.
 
+
+
 #### Exercise - Scaling in the docker-compose file
 
 Update the yml file with the new deployment info, stating that we want to have 5 replicas of the vote service.
 [Docker Compose deploy documentation](https://docs.docker.com/compose/compose-file/#deploy)
 
+**[Consider!]** Take a moment to consider what will happen if you scale the redis cache instead of the vote application.
+**Hint:** The worker connects to the redis by using the redis service dns name. This results the worker only connection to a random instance of redis, and not to a redis cluster or to all redis instances. The same is the case for the postgres database. The votes may end in one database, but the result app could be looking in another instance.
+
 ## Network security
 
 The next step in making our voting application more production ready is to make sure that the services only has access to what they need.
 
-More specifically, we want the services in the voting application to be on different networks. So that the frontend application _vote_ only has access to the redis cache and not to the postgres database or the result application.
+More specifically, we want the services in the voting application to be on different networks. So that the public application _vote_ only has access to the redis cache and not to the postgres database or the result application.
 
 We also need the _worker_ service to have access to both networks, because it is the one responsible for moving votes from the redis cache to the postgres database.
 
-| _Frontend_    | _Backend_     |
-| ------------- |---------------|
-| vote          | worker        |
-| redis         | db            |
-| worker        | result        |
 
 ### Exercise - Setting up network separation
 
-Create the two networks in the yml file and specify the networks on the services.
+Create the following two networks in the yml file and specify the networks on the services.
+
+#### public_vote
+
+* vote
+* redis
+* worker
+
+#### private_result
+
+* worker
+* db
+* result
+
 Note that this is something that docker has changed a lot over time.
 Newest documentation is here: [Docker compose endpoint mode](https://docs.docker.com/compose/compose-file/#endpoint_mode)
 
