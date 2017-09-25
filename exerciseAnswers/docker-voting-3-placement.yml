@@ -6,7 +6,7 @@ services:
     ports:
       - "6379"
     networks:
-      - frontend
+      - public_vote
     deploy:
       placement:
         constraints:
@@ -17,7 +17,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     networks:
-      - backend
+      - private_result
     deploy:
       placement:
         constraints:
@@ -35,7 +35,7 @@ services:
         constraints:
           - node.labels.disk == hdd
     networks:
-      - frontend
+      - public_vote
 
   result:
     image: dockersamples/examplevotingapp_result:before
@@ -44,7 +44,7 @@ services:
     depends_on:
       - db
     networks:
-      - backend
+      - private_result
     deploy:
       placement:
         constraints:
@@ -56,8 +56,8 @@ services:
       - db
       - redis
     networks:
-      - frontend
-      - backend
+      - public_vote
+      - private_result
     deploy:
       placement:
         constraints:
@@ -67,5 +67,5 @@ volumes:
   db-data:
 
 networks:
-  frontend:
-  backend:
+  public_vote:
+  private_result:
