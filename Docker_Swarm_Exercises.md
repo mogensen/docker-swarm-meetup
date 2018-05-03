@@ -55,7 +55,7 @@ In the top of the window on Play With Docker there is a button labled "Editor".
 This allows you to edit filed that are on the different machine instances.
 
 To use the editor you need to create a file in the terminal in order to see it there.
-First you do a `touch docker-compoes.yaml` and then open the editor (or use the refresh button in the editor window) you'll see the file
+First you do a `touch docker-compose.yaml` and then open the editor (or use the refresh button in the editor window) you'll see the file
 there.
 
 #### 3. Install the docker-machine driver for Play With Docker
